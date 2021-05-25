@@ -1,2 +1,2 @@
 console.log("Coding can be difficult");
-console.log("But git makes it easier")
+console.log("But github and pull requests make it easier")
