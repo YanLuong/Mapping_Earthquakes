@@ -35,49 +35,6 @@ console.log("working");
 //   color: "yellow"
 // }).addTo(map);
 
-
-//  Add a marker to the map for Los Angeles, California. 13.4.2 set up for multiple markers
-
-
-
-// Get data from cities.js
-// let cityData = cities;
-
-
-//cities array for markers
-// An array containing each city's location, state, and population.
-// let cities = [{
-//     location: [40.7128, -74.0059],
-//     city: "New York City",
-//     state: "NY",
-//     population: 8398748
-//   },
-//   {
-//     location: [41.8781, -87.6298],
-//     city: "Chicago",
-//     state: "IL",
-//     population: 2705994
-//   },
-//   {
-//     location: [29.7604, -95.3698],
-//     city: "Houston",
-//     state: "TX",
-//     population: 2325502
-//   },
-//   {
-//     location: [34.0522, -118.2437],
-//     city: "Los Angeles",
-//     state: "CA",
-//     population: 3990456
-//   },
-//   {
-//     location: [33.4484, -112.0740],
-//     city: "Phoenix",
-//     state: "AZ",
-//     population: 1660272
-//   }
-//   ];
-
   // Loop through the cities array and create one marker for each city.
 // Loop through the cities array and create one marker for each city.
 // cities.forEach(function(city) {
@@ -163,20 +120,46 @@ let myStyle = {
   color: "#ffffa1",
   weight: 2
 }
+
+
+
 // Grabbing our GeoJSON data.
 d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson").then(function(data) {
-  //console.log(data);
+
+
+
+// This function returns the style data for each of the earthquakes we plot on
+// the map. We pass the magnitude of the earthquake into a function
+// to calculate the radius.
+function styleInfo(feature) {
+  return {
+    opacity: 1,
+    fillOpacity: 1,
+    fillColor: "#ffae42",
+    color: "#000000",
+    radius: getRadius(),
+    stroke: true,
+    weight: 0.5
+  };
+}
+
+// This function determines the radius of the earthquake marker based on its magnitude.
+// Earthquakes with a magnitude of 0 will be plotted with a radius of 1.
+function getRadius(magnitude) {
+  if (magnitude === 0) {
+    return 1;
+  }
+  return magnitude * 4;
+}
+
 // Creating a GeoJSON layer with the retrieved data.
-L.geoJson(data
-  // , {
-  //   style: myStyle,
-  //   // We turn each feature into a marker on the map.
-  //   onEachFeature: function(feature, layer) {
-  //     console.log(layer);
-  //     layer.bindPopup("<h3> Neighbourhood: " + feature.properties.AREA_NAME + "</h3>");
-  //   }}
-  ).addTo(map);
-});
-
-
-
+L.geoJson(data, {
+  // We turn each feature into a circleMarker on the map.
+  pointToLayer: function(feature, latlng) {
+              console.log(data);
+              return L.circleMarker(latlng);  
+          },
+             // We set the style for each circleMarker using our styleInfo function.
+             style: styleInfo
+      }).addTo(map);
+  });
