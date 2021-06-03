@@ -170,7 +170,7 @@ let baseMaps = {
 let map = L.map('mapid', {
   center: [43.7, -79.3],
   zoom: 11,
-  layers: [satelliteStreets]
+  layers: [streets]
 })//
 
 // Pass our map layers into our layers control and add the layers control to the map.
@@ -193,13 +193,13 @@ d3.json(torontoHoods).then(function(data) {
   console.log(data);
 // Creating a GeoJSON layer with the retrieved data.
 L.geoJson(data
-  // , {
-  //   style: myStyle,
-  //   // We turn each feature into a marker on the map.
-  //   onEachFeature: function(feature, layer) {
-  //     console.log(layer);
-  //     layer.bindPopup("<h3> Airline Code: " + feature.properties.airline + "</h3> <hr> <h3>Destination: " + feature.properties.dst + "</h3>");
-  //   }}
+  , {
+    style: myStyle,
+    // We turn each feature into a marker on the map.
+    onEachFeature: function(feature, layer) {
+      console.log(layer);
+      layer.bindPopup("<h3> Neighbourhood: " + feature.properties.AREA_NAME + "</h3>");
+    }}
   ).addTo(map);
 });
 
