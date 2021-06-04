@@ -15,6 +15,15 @@ let satelliteStreets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/sate
 	accessToken: API_KEY
 });
 
+// Third tile layer that will be the background of our map.
+let darkMap = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+	attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery (c) <a href="https://www.mapbox.com/">Mapbox</a>',
+	maxZoom: 18,
+	accessToken: API_KEY
+});
+
+
+
 // Create the map object with center, zoom level and default layer.
 let map = L.map('mapid', {
 	center: [40.7, -94.5],
@@ -25,7 +34,8 @@ let map = L.map('mapid', {
 // Create a base layer that holds all three maps.
 let baseMaps = {
   "Streets": streets,
-  "Satellite": satelliteStreets
+  "Satellite": satelliteStreets,
+  "Dark": darkMap
 };
 
 // 1. Add a 2nd layer group for the tectonic plate data.
@@ -117,13 +127,13 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geoj
   // 4. Use the same style as the earthquake data.
   function styleInfo(feature) {
     return {
-      opacity: 1,
+      opacity: 0.7,
       fillOpacity: 0.5,
       fillColor: getColor(feature.properties.mag),
       color: "#000000",
       radius: getRadius(feature.properties.mag),
       stroke: true,
-      weight: 0.5
+      weight: 1
     };
   }
   
@@ -136,7 +146,7 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geoj
     if (magnitude > 5) {
       return "#11ADF1";
     }
-    if (magnitude < 5) {
+    if (magnitude > 4) {
       return "#11F183";
     }
     return "#9C11F1";
@@ -151,9 +161,7 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geoj
     return magnitude * 4;
   }
 
-
-
-  
+ 
   // 7. Creating a GeoJSON layer with the retrieved data that adds a circle to the map 
   // sets the style of the circle, and displays the magnitude and location of the earthquake
   //  after the marker has been created and styled.
@@ -172,18 +180,11 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geoj
     }
     }).addTo(majorEarthquakes);
 
-
-
-
-
   });
   // 8. Add the major earthquakes layer to the map.
   majorEarthquakes.addTo(map);
   // 9. Close the braces and parentheses for the major earthquake data.
  
-
-
-
 
   // Here we create a legend control object.
 let legend = L.control({
@@ -225,8 +226,6 @@ legend.onAdd = function() {
       color: "#F16611",
       weight: 3
     }).addTo(tectonicPlates);
-
-
   });
   tectonicPlates.addTo(map)
 });
